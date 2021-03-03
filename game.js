@@ -4,28 +4,29 @@ function Game() {
         score: 0,
         lines: 0,
         level: 0,
-        playfied: [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        ],
+        playfied: this.createPlayfied(),
+        // playfied: [
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        // ],
         activePiece: {
             x: 0,
             y: 0,
@@ -36,24 +37,55 @@ function Game() {
             ],
         },
 
-        rotatePiece: function() {
-            var blocks = this.activePiece.blocks;
-            var length = blocks.length;
-
-            var temp = [];
-            for(var i  = 0; i < length; i++) {
-                temp[i] = new Array(length).fill(0);
+        getState: function() {
+            var playfied = this.createPlayfied();
+            return {
+                playfied: playfied,
             }
+        },
 
-            for (var y = 0; y < length; y ++) {
-                for (var x = 0; x < length; x++) {
-                    temp[x][y] = blocks[length  - 1 - y][x]
+        createPlayfied: function() {
+            var playfied = [];
+            for(var y = 0; y < 20; y++) {
+                playfied[y] = []
+                for(var x = 0; x < y; x++) {
+                    playfied[y][x] = 0;
                 }
             }
-            this.activePiece.blocks = temp;
+
+            return playfied;
+        },
+
+        rotatePiece: function() {
+            this.rotateBlocks();
 
             if(this.hasCollision()) {
-                this.activePiece.blocks = blocks;
+                this.rotateBlocks(false);
+            }
+        },
+
+        rotateBlocks: function(clockwise = true) {
+            var blocks = this.activePiece.blocks;
+            var length = blocks.length;
+            var x = Math.floor(length /2 );
+            var y = length - 1;
+
+            for (var i = 0; i < x; i ++) {
+                for (var j = i; j < y - i; j++) {
+                    var temp = blocks[i][j];
+
+                    if(clockwise) {
+                        blocks[i][j] = blocks[y - j][i]
+                        blocks[y - j][i] = blocks[y - i][y - j]
+                        blocks[y - i][y - j] = blocks[j][y - i]
+                        blocks[j][y - i] = temp;
+                    } else {
+                        blocks[i][j] = blocks[j][y - i]
+                        blocks[j][y - i] = blocks[y - i][y - j]
+                        blocks[y - i][y - j] = blocks[y - i][j]
+                        blocks[y - j][i] = temp;
+                    }
+                }
             }
         },
 

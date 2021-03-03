@@ -4,3 +4,8 @@ body {
 h1 {
     color: #fff;
 }
+
+canvas {
+    margin: auto;
+    display: block;
+}
