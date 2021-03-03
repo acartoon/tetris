@@ -4,6 +4,17 @@ function Game() {
         score: 0,
         lines: 0,
         level: 0,
+        get createPlayfied() {
+            var playfied = [];
+            for(var y = 0; y < 20; y++) {
+                playfied[y] = []
+                for(var x = 0; x < y; x++) {
+                    playfied[y][x] = 0;
+                }
+            }
+
+            return playfied;
+        },
         playfied: this.createPlayfied(),
         // playfied: [
         //     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -36,6 +47,10 @@ function Game() {
                 [0, 0, 0],
             ],
         },
+        // get blocks() {
+        //     return this.rotations[this.rotationIndex]
+        // },
+
 
         getState: function() {
             var playfied = this.createPlayfied();
@@ -44,17 +59,6 @@ function Game() {
             }
         },
 
-        createPlayfied: function() {
-            var playfied = [];
-            for(var y = 0; y < 20; y++) {
-                playfied[y] = []
-                for(var x = 0; x < y; x++) {
-                    playfied[y][x] = 0;
-                }
-            }
-
-            return playfied;
-        },
 
         rotatePiece: function() {
             this.rotateBlocks();
